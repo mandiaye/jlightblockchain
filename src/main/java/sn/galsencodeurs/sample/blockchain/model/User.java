@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import javax.validation.constraints.Email;
 
+import org.apache.commons.lang3.RandomUtils;
 import org.springframework.lang.NonNull;
 
 import lombok.Getter;
@@ -12,6 +13,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class User {
+    private int id;
 
     @Email
     private String email;
@@ -28,6 +30,15 @@ public class User {
         this.password = password;
         this.solde = solde;
         this.payload = payload;
+        this.id = RandomUtils.nextInt();
     }
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", solde=" + solde + "CFA" +
+                '}';
+    }
 }

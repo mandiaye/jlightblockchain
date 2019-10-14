@@ -2,6 +2,8 @@ package sn.galsencodeurs.sample.blockchain.model;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -17,22 +19,23 @@ public class Block {
 
     private long index;
     private Timestamp timeStamp;
-    private String data;
+    private List<Transaction> transactions;
     private String previousHash;
     private int nonce;
     private String hash;
 
+    private static final int MAX_TRANSACTION = 500;
 
-    public Block(long index, Timestamp timeStamp, String data, String previousHash) {
+    public Block(long index, String previousHash) {
         this.index = index;
-        this.timeStamp = timeStamp;
-        this.data = data;
+        this.timeStamp = Timestamp.valueOf(LocalDateTime.now());
+        this.transactions = new ArrayList<>();
         this.previousHash = previousHash;
         this.hash = this.calculateHash();
     }
 
     public String calculateHash() {
-        return DigestUtils.sha256Hex(String.valueOf(this.index) + this.timeStamp + this.data + this.previousHash + this.nonce);
+        return DigestUtils.sha256Hex(String.valueOf(this.index) + this.timeStamp + this.transactions + this.previousHash + this.nonce);
     }
 
     public boolean solveProofOfWork(int difficulty) {
@@ -58,12 +61,21 @@ public class Block {
         }
     }
 
+    public void addTransaction(Transaction transaction) {
+        if(this.transactions.size() >= MAX_TRANSACTION){
+            log.error("{} not added, max transaction {} reached", transaction, MAX_TRANSACTION);
+        }
+        else{
+            this.transactions.add(transaction);
+        }
+    }
+
     @Override
     public String toString() {
         return "Block{" +
             "index=" + index +
             ", timeStamp=" + timeStamp +
-            ", data='" + data + '\'' +
+            ", transactions='" + transactions + '\'' +
             ", previousHash='" + previousHash + '\'' +
             ", nonce=" + nonce +
             ", hash='" + hash + '\'' +

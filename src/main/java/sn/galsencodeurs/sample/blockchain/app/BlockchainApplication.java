@@ -17,19 +17,13 @@ public class BlockchainApplication implements CommandLineRunner {
 
 	private final BlockChain blockChain;
 
+
 	public static void main(String[] args) {
 		SpringApplication.run(BlockchainApplication.class, args);
 	}
 
 	@Override
-	public void run(String... args) throws Exception {
-		blockChain.generateNextBlock("Transfer:100");
-		blockChain.generateNextBlock("Transfer:200");
-
-		log.info("Block Chain blocks \n\t");
-		blockChain.getBlocks().forEach(block -> log.info(" --- {}\n\t ", block));
-
-
-		blockChain.getBlocks().parallelStream().forEach(block -> block.solveProofOfWork(4));
+	public void run(String... args) {
+		blockChain.startSimulation();
 	}
 }
